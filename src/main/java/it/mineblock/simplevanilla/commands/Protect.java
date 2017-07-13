@@ -98,7 +98,7 @@ public class Protect implements CommandExecutor {
                         return true;
                     }
 
-                    if(!Utilities.canBeUnprotected(block)) {
+                    if(!Utilities.canBeUnprotected(block, player)) {
                         /*@TODO Message*/
                         Chat.send(Message.PROTECTION_IMPOSSIBLE.get(), player);
                         return true;
@@ -191,28 +191,105 @@ public class Protect implements CommandExecutor {
                     String value = args[2];
                     switch(param) {
                         case "open":
-
+                            if(value.equalsIgnoreCase("allow")) {
+                                MySQL.setString(Main.DB_USER, "teamSettings", Utilities.codeBuilder(player, "open", "a"), "uuid", player.getUniqueId().toString());
+                                /*@TODO send message*/
+                            }
+                            else if(value.equalsIgnoreCase("deny")) {
+                                MySQL.setString(Main.DB_USER, "teamSettings", Utilities.codeBuilder(player, "open", "d"), "uuid", player.getUniqueId().toString());
+                                /*@TODO send message*/
+                            } else {
+                                Chat.send(Message.INCORRECT_PARAM.get(), player);
+                                return true;
+                            }
                             break;
                         case "destroy":
-
+                            if(value.equalsIgnoreCase("allow")) {
+                                MySQL.setString(Main.DB_USER, "teamSettings", Utilities.codeBuilder(player, "destroy", "a"), "uuid", player.getUniqueId().toString());
+                                /*@TODO send message*/
+                            }
+                            else if(value.equalsIgnoreCase("deny")) {
+                                MySQL.setString(Main.DB_USER, "teamSettings", Utilities.codeBuilder(player, "destroy", "d"), "uuid", player.getUniqueId().toString());
+                                /*@TODO send message*/
+                            } else {
+                                Chat.send(Message.INCORRECT_PARAM.get(), player);
+                                return true;
+                            }
                             break;
                         case "control":
-
+                            if(value.equalsIgnoreCase("allow")) {
+                                MySQL.setString(Main.DB_USER, "teamSettings", Utilities.codeBuilder(player, "control", "a"), "uuid", player.getUniqueId().toString());
+                                /*@TODO send message*/
+                            }
+                            else if(value.equalsIgnoreCase("deny")) {
+                                MySQL.setString(Main.DB_USER, "teamSettings", Utilities.codeBuilder(player, "control", "d"), "uuid", player.getUniqueId().toString());
+                                /*@TODO send message*/
+                            } else {
+                                Chat.send(Message.INCORRECT_PARAM.get(), player);
+                                return true;
+                            }
                             break;
                         default:
                             Chat.send(Message.INCORRECT_PARAM.get(), player);
                             break;
                     }
-
                 } else {
                     Chat.send(Message.INCORRECT_USAGE.getReplaced("{command}", "/protect help"), player);
                 }
                 break;
             case "private":
+                Block privateBlock = Utilities.getPlayerTargetBlock(player);
+                if(!Utilities.isBlockCompatible(privateBlock)) {
 
+                    Chat.send(Message.PROTECTION_IMPOSSIBLE.get(), player);
+                    return true;
+                }
+
+                if(!Utilities.canBeUnprotected(privateBlock)) {
+                        /*@TODO Message*/
+                    Chat.send(Message.PROTECTION_IMPOSSIBLE.get(), player);
+                    return true;
+                }
+
+                if(!Utilities.isProtected(privateBlock)) {
+                        /*@TODO Message*/
+                    Chat.send(Message.PROTECTION_INEXISTENT.get(), player);
+                    return true;
+                }
+
+                long xPr = privateBlock.getX();
+                long yPr = privateBlock.getY();
+                long zPr = privateBlock.getZ();
+
+                MySQL.setBoolean(Main.DB_PROTECTION, "private", true, new String[] {"x", "y", "z"}, new String[] {String.valueOf(xPr), String.valueOf(yPr), String.valueOf(zPr)});
+                /*@TODO Message*/
                 break;
             case "public":
+                Block publicBlock = Utilities.getPlayerTargetBlock(player);
+                if(!Utilities.isBlockCompatible(publicBlock)) {
 
+                    Chat.send(Message.PROTECTION_IMPOSSIBLE.get(), player);
+                    return true;
+                }
+
+                if(!Utilities.canBeUnprotected(publicBlock)) {
+                        /*@TODO Message*/
+                    Chat.send(Message.PROTECTION_IMPOSSIBLE.get(), player);
+                    return true;
+                }
+
+                if(!Utilities.isProtected(publicBlock)) {
+                        /*@TODO Message*/
+                    Chat.send(Message.PROTECTION_INEXISTENT.get(), player);
+                    return true;
+                }
+
+                long xPu = publicBlock.getX();
+                long yPu = publicBlock.getY();
+                long zPu = publicBlock.getZ();
+
+                MySQL.setBoolean(Main.DB_PROTECTION, "private", true, new String[] {"x", "y", "z"}, new String[] {String.valueOf(xPu), String.valueOf(yPu), String.valueOf(zPu)});
+                /*@TODO Message*/
                 break;
             default:
                 Chat.send(Message.INCORRECT_USAGE.getReplaced("{command}", "/protect help"), player);

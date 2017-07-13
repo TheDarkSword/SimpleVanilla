@@ -1,0 +1,70 @@
+mysql:
+ host: "localhost"
+ port: 3306
+ database: "minecraft"
+ username: "user"
+ password: "password"
+ prefix: "ag_"
+
+ protected-blocks:
+ - CHEST
+ - TRAPPED_CHEST
+ - FURNACE
+ - BURNING_FURNACE
+ - BREWING_STAND
+ - HOPPER
+ - DISPENCER
+ - DROPPER
+ - WHITE_SHULKER_BOX
+ - ORANGE_SHULKER_BOX
+ - MAGENTA_SHULKER_BOX
+ - LIGHT_BLUE_SHULKER_BOX
+ - YELLOW_SHULKER_BOX
+ - PINK_SHULKER_BOX
+ - GRAY_SHULKER_BOX
+ - SILVER_SHULKER_BOX
+ - CYAN_SHULKER_BOX
+ - PURPLE_SHULKER_BOX
+ - BLUE_SHULKER_BOX
+ - BROWN_SHULKER_BOX
+ - GREEN_SHULKER_BOX
+ - RED_SHULKER_BOX
+ - BLACK_SHULKER_BOX
+ - STORAGE_MINECART
+ - POWERED_MINECART
+ - HOPPER_MINECART
+ - ITEM_FRAME
+
+ auto-protected-blocks:
+ - CHEST
+ - TRAPPED_CHEST
+
+message:
+  incorrect-param: "&cParametro non corretto"
+  incorrect-usage: "&cUso scorretto! Usa così il comando: &e{command}"
+  insufficient-perm: "&cNon hai il permesso di eseguire questo comando!"
+  not-player: "&cDevi essere un player per eseguire questo comando!"
+  player-not-found: "&cQuesto player non esiste!"
+  protection-added: "&6Il blocco, {block}, è stato protetto!"
+  protection-added-friend: "&6Hai dato l'accesso a {player} per questo blocco!"
+  protection-error: "&cNon sei il proprietario di questo blocco!"
+  protection-existent: "&cQuesto blocco è già protetto!"
+  protection-impossible: "&cNon puoi proteggere questo blocco!"
+  protection-inexistent: "&cQuesto blocco non è protetto!"
+  protection-nothing: "&cOperazione non eseguita in quanto non necessaria!"
+  protection-removed: "&6Protezione del blocco {block} rimossa"
+  protection-removed-friend: "&6Hai tolto l'accesso a {player} per questo blocco!"
+  pvp-actived: "&6&lPvP &2attivato"
+  pvp-deactived: "&6&lPvP &4disattivato"
+  ticket-list: "&f[&9{code}&f] &9&l{player} &f[&9x&f:&b{x}&f, &9y&f:&b{y}&f, &9z&f:&b{z}&f] &9: &f{message}"
+  ticket-nothing: "&cNon hai selezionato nessun ticket!"
+  ticket-notify: "&f[&9{code}&f] &9&l{player} &bha aperto un ticket con messaggio: &f{message}"
+  ticket-open: "&2Hai inviato il ticket, il codice di riferimento è &e{code} &2conservalo per facilitare le operazioni di assistenza"
+  ticket-solve: "&f[&9{code}&f] &9&l{player} &f: {message}"
+  ticket-solved: "&9Ticket &f{code} &9risolto"
+  ticket-solving: "&cPuoi risolvere un solo ticket alla volta!"
+  ticket-solving-notify: "&9{player} &fsta risolvendo il ticket numero &9{code}&f!"
+  ticket-unsolve: "&cPuoi usare questo comando solo se stai risolvendo un ticket. L'id che inserisci deve essere uguale a quello del ticket che stai risolvendo"
+  ticket-unsolved: "&9Ticket &f{code} &9non risolto"
+
+welcome-message: "&2Ciao, benvenuto in &aDeliriumCraft&2! Ricordati che puoi usare il comando &e/ticket &2 per aprire una segnalazione &7(Ogni abuso verrà punito)&2. Quando posizioni una cassa, essa verrà protetta in automatico, usa il comando &e/protect help &2per maggiori informazioni oppure contatta lo staff."

@@ -1,0 +1,7 @@
+name: SimpleVanilla
+version: ${project.version}
+main: it.mineblock.simplevanilla.Main
+depend: [MBCore]
+authors: [LoreSchaeffer]
+description: A simple plugin to improve vanilla mechanics
+website: www.mineblock.it

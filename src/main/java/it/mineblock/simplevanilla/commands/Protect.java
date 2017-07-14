@@ -37,18 +37,14 @@ public class Protect implements CommandExecutor {
 
         if(args.length == 0) {
             Block block = Utilities.getPlayerTargetBlock(player);
-            if(!Utilities.isBlockCompatible(block)) {
-                Chat.send(Message.PROTECTION_IMPOSSIBLE.get(), player);
+
+            if(Utilities.isProtected(block)) {
+                Chat.send(Message.PROTECTION_EXISTENT.get(), player);
                 return true;
             }
 
             if(!Utilities.canBeProtected(block)) {
                 Chat.send(Message.PROTECTION_IMPOSSIBLE.get(), player);
-                return true;
-            }
-
-            if(Utilities.isProtected(block)) {
-                Chat.send(Message.PROTECTION_EXISTENT.get(), player);
                 return true;
             }
 
@@ -92,21 +88,9 @@ public class Protect implements CommandExecutor {
             case "remove":
                 if(args.length == 1) {
                     Block block = Utilities.getPlayerTargetBlock(player);
-                    if(!Utilities.isBlockCompatible(block)) {
-
-                        Chat.send(Message.PROTECTION_IMPOSSIBLE.get(), player);
-                        return true;
-                    }
 
                     if(!Utilities.canBeUnprotected(block, player)) {
                         /*@TODO Message*/
-                        Chat.send(Message.PROTECTION_IMPOSSIBLE.get(), player);
-                        return true;
-                    }
-
-                    if(!Utilities.isProtected(block)) {
-                        /*@TODO Message*/
-                        Chat.send(Message.PROTECTION_INEXISTENT.get(), player);
                         return true;
                     }
 
@@ -239,21 +223,8 @@ public class Protect implements CommandExecutor {
                 break;
             case "private":
                 Block privateBlock = Utilities.getPlayerTargetBlock(player);
-                if(!Utilities.isBlockCompatible(privateBlock)) {
-
-                    Chat.send(Message.PROTECTION_IMPOSSIBLE.get(), player);
-                    return true;
-                }
-
-                if(!Utilities.canBeUnprotected(privateBlock)) {
+                if(!Utilities.canBeUnprotected(privateBlock, player)) {
                         /*@TODO Message*/
-                    Chat.send(Message.PROTECTION_IMPOSSIBLE.get(), player);
-                    return true;
-                }
-
-                if(!Utilities.isProtected(privateBlock)) {
-                        /*@TODO Message*/
-                    Chat.send(Message.PROTECTION_INEXISTENT.get(), player);
                     return true;
                 }
 
@@ -266,15 +237,8 @@ public class Protect implements CommandExecutor {
                 break;
             case "public":
                 Block publicBlock = Utilities.getPlayerTargetBlock(player);
-                if(!Utilities.isBlockCompatible(publicBlock)) {
-
-                    Chat.send(Message.PROTECTION_IMPOSSIBLE.get(), player);
-                    return true;
-                }
-
-                if(!Utilities.canBeUnprotected(publicBlock)) {
+                if(!Utilities.canBeUnprotected(publicBlock, player)) {
                         /*@TODO Message*/
-                    Chat.send(Message.PROTECTION_IMPOSSIBLE.get(), player);
                     return true;
                 }
 

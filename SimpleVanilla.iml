@@ -38,6 +38,6 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.yaml:snakeyaml:1.18" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.md-5:bungeecord-chat:1.12-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.ow2.asm:asm-all:5.0.4" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: it.mineblock.mbcore:MBCore:2.8" level="project" />
+    <orderEntry type="library" name="Maven: com.github.LoreSchaeffer:MBCore:37ae99999c" level="project" />
   </component>
 </module>

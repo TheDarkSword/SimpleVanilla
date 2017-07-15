@@ -1,5 +1,6 @@
 package it.mineblock.simplevanilla;
 
+import it.mineblock.mbcore.Chat;
 import it.mineblock.mbcore.MySQL;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -23,12 +24,22 @@ public class Utilities {
         return protectedBlocks.contains(block.getType().name());
     }
 
-    public static boolean canBeProtected(Block block) {
-        return !(!isBlockCompatible(block) || isProtected(block));
+    public static boolean canBeProtected(Block block, Player player) {
+        if(!isBlockCompatible(block)) {
+            Chat.send(Message.PROTECT_INCOMPATIBLE.get(), player);
+            return false;
+        }
+
+        if(isProtected(block)) {
+            Chat.send(Message.PROTECT_ALREADY.get(), player);
+            return false;
+        }
+        return true;
     }
 
     public static boolean canBeUnprotected(Block block, Player player) {
         if(!isProtected(block)) {
+            Chat.send(Message.PROTECT_INEXISTENT.get(), player);
             return false;
         }
 
@@ -48,21 +59,23 @@ public class Utilities {
             if (!MySQL.getBoolean(Main.DB_USER, "username", owner, "allowTeam")) {
                 //if player is not the owner's allowedPlayer
                 if (MySQL.getString(Main.DB_USER, "username", owner, "allowedPlayer").equalsIgnoreCase(player.getName())) {
+                    Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
                     return false;
                 }
             } else { //if team is allowed
                 //if player is not in owner team
                 if (!MySQL.getString(Main.DB_USER, "username", owner, "team").equalsIgnoreCase(MySQL.getString(Main.DB_USER, "username", player.getName(), "team"))) {
+                    Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
                     return false;
                 } else { //if player is in owner team
                     //if team setting "control" is false
                     if (!codeParser(owner).get(2)) {
+                        Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
                         return false;
                     }
                 }
             }
         }
-
         return true;
     }
 
@@ -87,21 +100,23 @@ public class Utilities {
             if (!MySQL.getBoolean(Main.DB_USER, "username", owner, "allowTeam")) {
                 //if player is not the owner's allowedPlayer
                 if (MySQL.getString(Main.DB_USER, "username", owner, "allowedPlayer").equalsIgnoreCase(player.getName())) {
+                    Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
                     return false;
                 }
             } else { //if team is allowed
                 //if player is not in owner team
                 if (!MySQL.getString(Main.DB_USER, "username", owner, "team").equalsIgnoreCase(MySQL.getString(Main.DB_USER, "username", player.getName(), "team"))) {
+                    Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
                     return false;
                 } else { //if player is in owner team
                     //if team setting "open" is false
                     if (!codeParser(owner).get(0)) {
+                        Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
                         return false;
                     }
                 }
             }
         }
-
         return true;
     }
 
@@ -126,21 +141,23 @@ public class Utilities {
             if (!MySQL.getBoolean(Main.DB_USER, "username", owner, "allowTeam")) {
                 //if player is not the owner's allowedPlayer
                 if (MySQL.getString(Main.DB_USER, "username", owner, "allowedPlayer").equalsIgnoreCase(player.getName())) {
+                    Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
                     return false;
                 }
             } else { //if team is allowed
                 //if player is not in owner team
                 if (!MySQL.getString(Main.DB_USER, "username", owner, "team").equalsIgnoreCase(MySQL.getString(Main.DB_USER, "username", player.getName(), "team"))) {
+                    Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
                     return false;
                 } else { //if player is in owner team
                     //if team setting "open" is false
                     if (!codeParser(owner).get(1)) {
+                        Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
                         return false;
                     }
                 }
             }
         }
-
         return true;
     }
 

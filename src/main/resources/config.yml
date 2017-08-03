@@ -4,9 +4,9 @@ mysql:
  database: "minecraft"
  username: "user"
  password: "password"
- prefix: "ag_"
+ prefix: "sv_"
 
- protected-blocks:
+protected-blocks:
  - CHEST
  - TRAPPED_CHEST
  - FURNACE
@@ -35,14 +35,11 @@ mysql:
  - HOPPER_MINECART
  - ITEM_FRAME
 
- auto-protected-blocks:
+auto-protected-blocks:
  - CHEST
  - TRAPPED_CHEST
 
 message:
-  open: "aprire"
-  destroy: "distruggere"
-  control: "controllare"
   incorrect-param: "&cParametro non corretto"
   incorrect-usage: "&cUso scorretto! Usa così il comando: &e{command}"
   insufficient-perm: "&cNon hai il permesso di eseguire questo comando!"
@@ -59,13 +56,28 @@ message:
   protect-inexistent: "&cQuesto blocco non è protetto!"
   protect-perm-denied: "&cNon hai il permesso di eseguire questa operazione!"
   protect-pointer: "&cDevi usare questo comando puntando un blocco!"
+  protect-private: "&9Il blocco, &f{block}&9, può ora può essere aperto solo da te!"
+  protect-private-warn: "&cQuesto blocco è privato!"
+  protect-public: "&9Il blocco, &f{block}&9, può ora può essere aperto secondo le tue impostazioni!"
   protect-removed: "&9Il blocco, &f{block}&9, non è più protetto"
   protect-team-allowed: "&9Ora il tuo team può accedere alle tue protezioni secondo le tue impostazioni!"
   protect-team-denied: "&9Il tuo team non può più accedere alle tue protezioni!"
-  protect-team-setting-allowed: "&9Il tuo team può {action} le tue protezioni!"
-  protect-team-setting-denied: "&9Il tuo team non può più {action} le tue protezioni!"
   pvp-actived: "&6&lPvP &2attivato"
   pvp-deactived: "&6&lPvP &4disattivato"
+  team-already: "&cIl player è già in un team!"
+  team-created: "&9Hai creato il team &f&l{name}&9!"
+  team-denied-perm: "&cDevi essere il leader del team per eseguire questo comando!"
+  team-exists: "&cEsiste già un team con questo nome!"
+  team-inexistent: "&cTeam inesistente!"
+  team-invite: "&9Hai ricevuto un invito ad entrare nel team &f&l{name}&9. Usa il comando &f/team accept &9per accettare la richiesta!"
+  team-invite-sent: "&9Hai inviato la richiesta a &f{player}&9!"
+  team-join: "&9Sei entrato nel team &f&l{name}&9!"
+  team-joined: "&f{player} &9 è entrato nel team!"
+  team-nothing: "&cNon sei in nessun team!"
+  team-not-your: "&cQuesto player non è nel tuo team!"
+  team-pending-none: "&cNon hai nessuna richiesta d team!"
+  team-remove: "&9Hai rimosso &f{player} &9dal tuo team!"
+  team-removed: "&cSei stato rimosso dal team &f&l{name}&c!"
   ticket-list: "&f[&9{code}&f] &9&l{player} &f[&9x&f:&b{x}&f, &9y&f:&b{y}&f, &9z&f:&b{z}&f] &9: &f{message}"
   ticket-nothing: "&cNon hai selezionato nessun ticket!"
   ticket-notify: "&f[&9{code}&f] &9&l{player} &bha aperto un ticket con messaggio: &f{message}"

@@ -1,5 +1,6 @@
 package it.mineblock.simplevanilla.listeners;
 
+import it.mineblock.mbcore.Chat;
 import it.mineblock.mbcore.MySQL;
 import it.mineblock.simplevanilla.Main;
 import org.bukkit.entity.Player;
@@ -31,6 +32,7 @@ public class OnPlayerJoin implements Listener {
         values.add(Main.TIMESTAMP.format(date));
 
         if(!MySQL.rowExists(Main.DB_USER, "uuid", uuid.toString())) {
+            Chat.send(Main.config.getString("welcome-message"), player, true);
             MySQL.insertLine(Main.DB_USER, new String[] {"username", "uuid", "first_login"}, values);
         }
     }

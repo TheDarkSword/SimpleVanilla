@@ -67,11 +67,14 @@ public class Ticket implements CommandExecutor {
                     Chat.send(Chat.getTranslated("&9-------- &f&lTicket List &9--------"), player);
 
                     for(int i = 0; i < 16; i++) {
-                        String username = MySQL.getString(Main.DB_TICKET, "id", (String) tickets.get(i), "username");
-                        long x = MySQL.getLong(Main.DB_TICKET, "id", (String) tickets.get(i), "x");
-                        long y = MySQL.getLong(Main.DB_TICKET, "id", (String) tickets.get(i), "y");
-                        long z = MySQL.getLong(Main.DB_TICKET, "id", (String) tickets.get(i), "z");
-                        String message = MySQL.getString(Main.DB_TICKET, "id", (String) tickets.get(i), "message");
+                        if(!MySQL.rowExists(Main.DB_TICKET, "id", String.valueOf(tickets.get(i)))) {
+                            break;
+                        }
+                        String username = MySQL.getString(Main.DB_TICKET, "id", String.valueOf(tickets.get(i)), "username");
+                        long x = MySQL.getLong(Main.DB_TICKET, "id", String.valueOf(tickets.get(i)), "x");
+                        long y = MySQL.getLong(Main.DB_TICKET, "id", String.valueOf(tickets.get(i)), "y");
+                        long z = MySQL.getLong(Main.DB_TICKET, "id", String.valueOf(tickets.get(i)), "z");
+                        String message = MySQL.getString(Main.DB_TICKET, "id", String.valueOf(tickets.get(i)), "message");
 
                         String output = Message.TICKET_LIST.get();
                         output = output.replace("{code}", String.valueOf(tickets.get(i)));

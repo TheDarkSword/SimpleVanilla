@@ -1,5 +1,7 @@
 package it.mineblock.simplevanilla;
 
+import it.mineblock.mbcore.Chat;
+
 /**
  * Copyright © 2017 by Lorenzo Magni
  * All rights reserved. No part of this code may be reproduced, distributed, or transmitted in any form or by any means,
@@ -7,9 +9,6 @@ package it.mineblock.simplevanilla;
  * of the creator.
  */
 public enum Message {
-    OPEN("open"),
-    DESTROY("destroy"),
-    CONTROL("control"),
     INCORRECT_PARAM("incorrect-param"),
     INCORRECT_USAGE("incorrect-usage"),
     INSUFFICIENT_PREMISSION("insufficient-perm"),
@@ -26,13 +25,28 @@ public enum Message {
     PROTECT_INEXISTENT("protect-inexistent"),
     PROTECT_PERM_DENIED("protect-perm-denied"),
     PROTECT_POINTER("protect-pointer"),
+    PROTECT_PRIVATE("protect-private"),
+    PROTECT_PRIVATE_WARN("protect-private-warn"),
+    PROTECT_PUBLIC("protect-public"),
     PROTECT_REMOVED("protect-removed"),
     PROTECT_TEAM_ALLOWED("protect-team-allowed"),
     PROTECT_TEAM_DENIED("protect-team-denied"),
-    PROTECT_TEAM_SETTING_ALLOWED("protect-team-setting-allowed"),
-    PROTECT_TEAM_SETTING_DENIED("protect-team-setting-denied"),
     PVP_ACTIVED("pvp-actived"),
     PVP_DEACTIVED("pvp-deactived"),
+    TEAM_ALREADY("team-already"),
+    TEAM_CREATED("team-created"),
+    TEAM_DENIED_PERM("team-denied-perm"),
+    TEAM_EXISTS("team-exists"),
+    TEAM_INEXISTENT("team-inexistent"),
+    TEAM_INVITE("team-invite"),
+    TEAM_INVITE_SENT("team-invite-sent"),
+    TEAM_JOIN("team-join"),
+    TEAM_JOINED("team-joined"),
+    TEAM_NOTHING("team-nothing"),
+    TEAM_NOT_YOUR("team-not-your"),
+    TEAM_PENDING_NONE("team-pending-none"),
+    TEAM_REMOVE("team-remove"),
+    TEAM_REMOVED("team-removed"),
     TICKET_LIST("ticket-list"),
     TICKET_NOTHING("ticket-nothing"),
     TICKET_NOTIFY("ticket-notify"),
@@ -51,10 +65,10 @@ public enum Message {
     }
 
     public String get() {
-        return Main.config.getString("message." + this.msg);
+        return Chat.getTranslated(Main.config.getString("message." + this.msg));
     }
 
     public String getReplaced(String target, String replacement) {
-        return Main.config.getString("message." + this.msg).replace(target, replacement);
+        return Chat.getTranslated(Main.config.getString("message." + this.msg).replace(target, replacement));
     }
 }

@@ -5,3 +5,17 @@ depend: [MBCore]
 authors: [LoreSchaeffer]
 description: A simple plugin to improve vanilla mechanics
 website: www.mineblock.it
+
+commands:
+   protect:
+         usage: /<command>
+         description: Protect and manage blocks
+   pvp:
+          usage: /<command>
+          description: Enable/disable pvp
+   team:
+          usage: /<command>
+          description: Create and manage teams
+   ticket:
+          usage: /<command>
+          description: Create and manage tickets

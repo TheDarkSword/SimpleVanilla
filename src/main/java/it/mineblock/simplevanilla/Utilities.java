@@ -2,9 +2,12 @@ package it.mineblock.simplevanilla;
 
 import it.mineblock.mbcore.Chat;
 import it.mineblock.mbcore.MySQL;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,12 +22,22 @@ import java.util.Set;
 public class Utilities {
 
     public static boolean isBlockCompatible(Block block) {
-        List<String> protectedBlocks = Main.config.getStringList("protected-blocks");
 
-        return protectedBlocks.contains(block.getType().name());
+        if(block == null) {
+            return false;
+        }
+
+        for(String id : Main.config.getStringList("protected-blocks")) {
+            if(block.getType().equals(Material.getMaterial(id))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean canBeProtected(Block block, Player player) {
+        isBlockCompatible(block);
+
         if(!isBlockCompatible(block)) {
             Chat.send(Message.PROTECT_INCOMPATIBLE.get(), player);
             return false;
@@ -37,69 +50,42 @@ public class Utilities {
         return true;
     }
 
-    public static boolean canBeUnprotected(Block block, Player player) {
-        if(!isProtected(block)) {
+    public static boolean canBeControlled(Block block, Player player) {
+        if (!isProtected(block)) {
             Chat.send(Message.PROTECT_INEXISTENT.get(), player);
             return false;
         }
 
-        if(player.hasPermission(Permissions.PROTECT_BYPASS.get())) {
+        if (player.hasPermission(Permissions.PROTECT_BYPASS.get())) {
             return true;
         }
 
-        long x = block.getX();
-        long y = block.getY();
-        long z = block.getZ();
-        int id = MySQL.getInt(Main.DB_PROTECTION, new String[] {"x", "y", "z"}, new String[] {String.valueOf(x), String.valueOf(y), String.valueOf(z)}, "id");
+        long x = (long) block.getX();
+        long y = (long) block.getY();
+        long z = (long) block.getZ();
+        int id = MySQL.getInt(Main.DB_PROTECTION, new String[]{"x", "y", "z"}, new String[]{String.valueOf(x), String.valueOf(y), String.valueOf(z)}, "id");
 
-        if(!MySQL.getString(Main.DB_PROTECTION, "id", String.valueOf(id), "username").equalsIgnoreCase(player.getName())) {
+        if (!MySQL.getString(Main.DB_PROTECTION, "id", String.valueOf(id), "username").equalsIgnoreCase(player.getName())) {
             String owner = MySQL.getString(Main.DB_PROTECTION, "id", String.valueOf(id), "username");
 
-            //if team is not allowed
-            if (!MySQL.getBoolean(Main.DB_USER, "username", owner, "allowTeam")) {
-                //if player is not the owner's allowedPlayer
-                if (MySQL.getString(Main.DB_USER, "username", owner, "allowedPlayer").equalsIgnoreCase(player.getName())) {
-                    Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
-                    return false;
-                }
-            } else { //if team is allowed
-                //if player is not in owner team
-                if (!MySQL.getString(Main.DB_USER, "username", owner, "team").equalsIgnoreCase(MySQL.getString(Main.DB_USER, "username", player.getName(), "team"))) {
-                    Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
-                    return false;
-                } else { //if player is in owner team
-                    //if team setting "control" is false
-                    if (!codeParser(owner).get(2)) {
-                        Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
-                        return false;
-                    }
-                }
+            if (MySQL.getBoolean(Main.DB_PROTECTION, "id", String.valueOf(id), "private")) {
+                Chat.send(Message.PROTECT_PRIVATE_WARN.get(), player);
+                return false;
             }
-        }
-        return true;
-    }
-
-    public static boolean canBeOpened(Block block, Player player) {
-        if(!isProtected(block)) {
-            return true;
-        }
-
-        if(player.hasPermission(Permissions.PROTECT_BYPASS.get())) {
-            return true;
-        }
-
-        long x = block.getX();
-        long y = block.getY();
-        long z = block.getZ();
-        int id = MySQL.getInt(Main.DB_PROTECTION, new String[] {"x", "y", "z"}, new String[] {String.valueOf(x), String.valueOf(y), String.valueOf(z)}, "id");
-
-        if(!MySQL.getString(Main.DB_PROTECTION, "id", String.valueOf(id), "username").equalsIgnoreCase(player.getName())) {
-            String owner = MySQL.getString(Main.DB_PROTECTION, "id", String.valueOf(id), "username");
 
             //if team is not allowed
             if (!MySQL.getBoolean(Main.DB_USER, "username", owner, "allowTeam")) {
                 //if player is not the owner's allowedPlayer
-                if (MySQL.getString(Main.DB_USER, "username", owner, "allowedPlayer").equalsIgnoreCase(player.getName())) {
+                String allowedPlayer = MySQL.getString(Main.DB_USER, "username", owner, "allowedPlayer");
+
+                if(allowedPlayer == null) {
+                    Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
+                    return false;
+                }
+
+                if(allowedPlayer.equalsIgnoreCase(player.getName())) {
+                    return true;
+                } else {
                     Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
                     return false;
                 }
@@ -108,53 +94,6 @@ public class Utilities {
                 if (!MySQL.getString(Main.DB_USER, "username", owner, "team").equalsIgnoreCase(MySQL.getString(Main.DB_USER, "username", player.getName(), "team"))) {
                     Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
                     return false;
-                } else { //if player is in owner team
-                    //if team setting "open" is false
-                    if (!codeParser(owner).get(0)) {
-                        Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    public static boolean canBeBroken(Block block, Player player) {
-        if(!isProtected(block)) {
-            return true;
-        }
-
-        if(player.hasPermission(Permissions.PROTECT_BYPASS.get())) {
-            return true;
-        }
-
-        long x = block.getX();
-        long y = block.getY();
-        long z = block.getZ();
-        int id = MySQL.getInt(Main.DB_PROTECTION, new String[] {"x", "y", "z"}, new String[] {String.valueOf(x), String.valueOf(y), String.valueOf(z)}, "id");
-
-        if(!MySQL.getString(Main.DB_PROTECTION, "id", String.valueOf(id), "username").equalsIgnoreCase(player.getName())) {
-            String owner = MySQL.getString(Main.DB_PROTECTION, "id", String.valueOf(id), "username");
-
-            //if team is not allowed
-            if (!MySQL.getBoolean(Main.DB_USER, "username", owner, "allowTeam")) {
-                //if player is not the owner's allowedPlayer
-                if (MySQL.getString(Main.DB_USER, "username", owner, "allowedPlayer").equalsIgnoreCase(player.getName())) {
-                    Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
-                    return false;
-                }
-            } else { //if team is allowed
-                //if player is not in owner team
-                if (!MySQL.getString(Main.DB_USER, "username", owner, "team").equalsIgnoreCase(MySQL.getString(Main.DB_USER, "username", player.getName(), "team"))) {
-                    Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
-                    return false;
-                } else { //if player is in owner team
-                    //if team setting "open" is false
-                    if (!codeParser(owner).get(1)) {
-                        Chat.send(Message.PROTECT_PERM_DENIED.get(), player);
-                        return false;
-                    }
                 }
             }
         }
@@ -162,9 +101,13 @@ public class Utilities {
     }
 
     public static boolean isProtected(Block block) {
-        long x = block.getX();
-        long y = block.getY();
-        long z = block.getZ();
+        if(block == null) {
+            return false;
+        }
+
+        long x = (long) block.getX();
+        long y = (long) block.getY();
+        long z = (long) block.getZ();
 
         if(MySQL.rowExists(Main.DB_PROTECTION, new String[] {"x", "y", "z"}, new String[] {String.valueOf(x), String.valueOf(y), String.valueOf(z)})) {
             return true;
@@ -173,51 +116,12 @@ public class Utilities {
     }
 
     public static Block getPlayerTargetBlock(Player player) {
-        return player.getTargetBlock((Set) null, 5);
+        return player.getTargetBlock((Set <Material>) null, 5);
     }
 
     public static boolean isNewbie(Player player) {
         Date date = new Date();
-        Date firstLogin = new Date(MySQL.getTimestamp(Main.DB_USER, "uuid", player.getUniqueId().toString(), "login_first").getTime());
+        Date firstLogin = new Date(MySQL.getTimestamp(Main.DB_USER, "uuid", player.getUniqueId().toString(), "first_login").getTime());
         return date.getTime() - firstLogin.getTime() < 172800000L;
-    }
-
-    public static String codeBuilder(Player player, String position, String value) {
-        String[] values = MySQL.getString(Main.DB_USER, "uuid", player.getUniqueId().toString(), "teamSettings").split("-");
-        String open = values[0];
-        String destroy = values[1];
-        String control = values[2];
-
-        switch(position) {
-            case "open":
-                open = value;
-                break;
-            case "destroy":
-                destroy = value;
-                break;
-            case "control":
-                control = value;
-                break;
-            default:
-                break;
-        }
-
-        String code = open + "-" + destroy + "-" + control;
-        return code;
-    }
-
-    public static ArrayList<Boolean> codeParser(String player) {
-        String[] values = MySQL.getString(Main.DB_USER, "username", player, "teamSettings").split("-");
-        ArrayList<Boolean> output = new ArrayList<>();
-
-        for(String str : values) {
-            if(str.equalsIgnoreCase("a")) {
-                output.add(true);
-            }
-            else if(str.equalsIgnoreCase("d")) {
-                output.add(false);
-            }
-        }
-        return output;
     }
 }

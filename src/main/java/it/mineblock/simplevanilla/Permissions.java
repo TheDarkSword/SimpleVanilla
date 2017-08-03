@@ -9,6 +9,7 @@ package it.mineblock.simplevanilla;
 public enum Permissions {
 
     TICKET_STAFF("ticket.staff"),
+    TEAM_STAFF("team.staff"),
     PROTECT_BYPASS("protect.bypass");
 
     private String perm;

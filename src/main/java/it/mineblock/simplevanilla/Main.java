@@ -30,6 +30,7 @@ public class Main extends JavaPlugin {
     public static Database DB_USER;
     public static Database DB_TICKET;
     public static Database DB_PROTECTION;
+    public static Database DB_TEAM;
     public static Configuration config;
     public static HashMap<Player, Location> locationBackup = new HashMap<>();
     public static HashMap<Player, Integer> staffTicket = new HashMap<>();
@@ -37,6 +38,7 @@ public class Main extends JavaPlugin {
     private static final String USER = "user";
     private static final String TICKET = "ticket";
     private static final String PROTECTION = "protection";
+    private static final String TEAM = "team";
     private static String PREFIX;
     private static final String CONFIG = "config.yml";
     private static Statement statement;
@@ -54,7 +56,7 @@ public class Main extends JavaPlugin {
         registerListeners();
         registerCommands();
 
-        Chat.getLogger("&6&lAntiGrief &2enabled!", "info");
+        Chat.getLogger("&6&lSimpleVanilla &2enabled!", "info");
     }
 
     private void dbInitialization() {
@@ -68,6 +70,7 @@ public class Main extends JavaPlugin {
         DB_USER = new Database(statement, PREFIX, USER);
         DB_TICKET = new Database(statement, PREFIX, TICKET);
         DB_PROTECTION = new Database(statement, PREFIX, PROTECTION);
+        DB_TEAM = new Database(statement, PREFIX, TEAM);
     }
 
     private void dbTableCreation() {
@@ -76,11 +79,11 @@ public class Main extends JavaPlugin {
                 "username VARCHAR(200) NOT NULL",
                 "uuid VARCHAR(200) NOT NULL",
                 "spawnpoint VARCHAR(400) NULL",
-                "team VARCHAR(400) NULL",
+                "team VARCHAR(200) NULL",
+                "teamPending VARCHAR(200) NULL",
                 "pvp TINYINT DEFAULT 0",
                 "allowedPlayer VARCHAR(200) NULL",
                 "allowTeam TINYINT DEFAULT 0",
-                "teamSettings VARCHAR(20) DEFAULT 'd-d-d'",
                 "first_login TIMESTAMP NULL",
                 "PRIMARY KEY (id)"
         });
@@ -102,10 +105,18 @@ public class Main extends JavaPlugin {
                 "id INT(11) NOT NULL AUTO_INCREMENT",
                 "username VARCHAR(200) NOT NULL",
                 "uuid VARCHAR(200) NOT NULL",
+                "block VARCHAR(64) NOT NULL",
                 "x BIGINT NOT NULL",
                 "y BIGINT NOT NULL",
                 "z BIGINT NOT NULL",
                 "private TINYINT DEFAULT 0",
+                "PRIMARY KEY (id)"
+        });
+
+        MySQL.createTable(DB_TEAM, new String[] {
+                "id INT(11) NOT NULL AUTO_INCREMENT",
+                "name VARCHAR(200) NOT NULL",
+                "leader VARCHAR(200) NOT NULL",
                 "PRIMARY KEY (id)"
         });
     }
@@ -117,11 +128,27 @@ public class Main extends JavaPlugin {
     private void registerListeners() {
         Bukkit.getServer().getPluginManager().registerEvents(new OnPlayerJoin(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new OnPlayerLeave(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new OnPlayerPvP(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new OnPlayerPlaceBlock(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new OnPlayerBreakBlock(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new OnPlayerInteract(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new OnPlayerUseLimited(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new OnEntityExplode(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new OnInventoryMove(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new OnPlayerSleep(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new OnPlayerRespawn(), this);
     }
 
     private void registerCommands() {
         getCommand("ticket").setExecutor(new Ticket());
         getCommand("pvp").setExecutor(new PvP());
         getCommand("protect").setExecutor(new Protect());
+        getCommand("team").setExecutor(new Team());
     }
+
+    /**
+     *
+     * @TODO Add support for fire arrow
+     * @TFO Try to add protection to armor stands
+     */
 }

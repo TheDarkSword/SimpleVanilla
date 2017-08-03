@@ -31,7 +31,7 @@ public class Protect implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        if(args.length > 3) {
+        if(args.length > 2) {
             Chat.send(Message.INCORRECT_USAGE.getReplaced("{command}", "/protect help"), player);
             return true;
         }
@@ -48,17 +48,18 @@ public class Protect implements CommandExecutor {
                 return true;
             }
 
-            long x = block.getX();
-            long y = block.getY();
-            long z = block.getZ();
+            long x = (long) block.getX();
+            long y = (long) block.getY();
+            long z = (long) block.getZ();
             ArrayList values = new ArrayList();
             values.add(player.getName());
             values.add(player.getUniqueId());
+            values.add(block.getType().name());
             values.add(x);
             values.add(y);
             values.add(z);
 
-            MySQL.insertLine(Main.DB_PROTECTION, new String[] {"username", "uuid", "x", "y", "z"}, values);
+            MySQL.insertLine(Main.DB_PROTECTION, new String[] {"username", "uuid", "block", "x", "y", "z"}, values);
             Chat.send(Message.PROTECT_ADDED.getReplaced("{block}", block.getType().name()), player);
             return true;
         }
@@ -81,9 +82,8 @@ public class Protect implements CommandExecutor {
                 Chat.send(Chat.getTranslated("&e/protect add <player>  &c- &7Da il permesso ad un player di controllare il blocco protetto."), player);
                 Chat.send(Chat.getTranslated("&e/protect remove <player> &c- &7Toglie il permesso ad un player di controllare il blocco protetto."), player);
                 Chat.send(Chat.getTranslated("&e/protect team <allow/deny> &c- &7Da/toglie il permesso di accedre ai blocchi protetti al team"), player);
-                Chat.send(Chat.getTranslated("&e/protect team <open/destroy/control> <allow/deny> &c- &7Permette di modificare le impostazioni di protezione dei tuoi blocchi."), player);
                 Chat.send(Chat.getTranslated("&cI parametri tra queste parentesi,<>, sono obbligatori, quelli tra queste parentesi,[], sono facoltativi"), player);
-                Chat.send(Chat.getTranslated("&cPer creare un team usa il comando &e/team&c."), player);
+                Chat.send(Chat.getTranslated("&cPer creare un team usa il comando &e/team help&c."), player);
                 break;
             case "remove":
                 if(args.length == 1) {
@@ -94,13 +94,13 @@ public class Protect implements CommandExecutor {
                         return true;
                     }
 
-                    if(!Utilities.canBeUnprotected(block, player)) {
+                    if(!Utilities.canBeControlled(block, player)) {
                         return true;
                     }
 
-                    long x = block.getX();
-                    long y = block.getY();
-                    long z = block.getZ();
+                    long x = (long) block.getX();
+                    long y = (long) block.getY();
+                    long z = (long) block.getZ();
 
                     MySQL.removeRow(Main.DB_PROTECTION, new String[] {"x", "y", "z"}, new String[] {String.valueOf(x), String.valueOf(y), String.valueOf(z)});
                     Chat.send(Message.PROTECT_REMOVED.getReplaced("{block}", block.getType().name()), player);
@@ -133,6 +133,11 @@ public class Protect implements CommandExecutor {
                 }
 
                 String username = args[1];
+
+                if(username.equalsIgnoreCase(player.getName())) {
+                    Chat.send(Message.PROTECT_ALLOWED_ALREADY.get(), player);
+                    return true;
+                }
 
                 if(!MySQL.rowExists(Main.DB_USER, "username", username)) {
                     Chat.send(Message.PLAYER_NOT_FOUND.get(), player);
@@ -171,62 +176,13 @@ public class Protect implements CommandExecutor {
                             Chat.send(Message.INCORRECT_PARAM.get(), player);
                             break;
                     }
-                }
-                else if(args.length == 3) {
-                    String param = args[1];
-                    String value = args[2];
-                    switch(param) {
-                        case "open":
-                            if(value.equalsIgnoreCase("allow")) {
-                                MySQL.setString(Main.DB_USER, "teamSettings", Utilities.codeBuilder(player, "open", "a"), "uuid", player.getUniqueId().toString());
-                                Chat.send(Message.PROTECT_TEAM_SETTING_ALLOWED.getReplaced("{action}", Message.OPEN.get()), player);
-                            }
-                            else if(value.equalsIgnoreCase("deny")) {
-                                MySQL.setString(Main.DB_USER, "teamSettings", Utilities.codeBuilder(player, "open", "d"), "uuid", player.getUniqueId().toString());
-                                Chat.send(Message.PROTECT_TEAM_SETTING_DENIED.getReplaced("{action}", Message.OPEN.get()), player);
-                            } else {
-                                Chat.send(Message.INCORRECT_PARAM.get(), player);
-                                return true;
-                            }
-                            break;
-                        case "destroy":
-                            if(value.equalsIgnoreCase("allow")) {
-                                MySQL.setString(Main.DB_USER, "teamSettings", Utilities.codeBuilder(player, "destroy", "a"), "uuid", player.getUniqueId().toString());
-                                Chat.send(Message.PROTECT_TEAM_SETTING_ALLOWED.getReplaced("{action}", Message.DESTROY.get()), player);
-                            }
-                            else if(value.equalsIgnoreCase("deny")) {
-                                MySQL.setString(Main.DB_USER, "teamSettings", Utilities.codeBuilder(player, "destroy", "d"), "uuid", player.getUniqueId().toString());
-                                Chat.send(Message.PROTECT_TEAM_SETTING_DENIED.getReplaced("{action}", Message.DESTROY.get()), player);
-                            } else {
-                                Chat.send(Message.INCORRECT_PARAM.get(), player);
-                                return true;
-                            }
-                            break;
-                        case "control":
-                            if(value.equalsIgnoreCase("allow")) {
-                                MySQL.setString(Main.DB_USER, "teamSettings", Utilities.codeBuilder(player, "control", "a"), "uuid", player.getUniqueId().toString());
-                                Chat.send(Message.PROTECT_TEAM_SETTING_ALLOWED.getReplaced("{action}", Message.CONTROL.get()), player);
-                            }
-                            else if(value.equalsIgnoreCase("deny")) {
-                                MySQL.setString(Main.DB_USER, "teamSettings", Utilities.codeBuilder(player, "control", "d"), "uuid", player.getUniqueId().toString());
-                                Chat.send(Message.PROTECT_TEAM_SETTING_DENIED.getReplaced("{action}", Message.CONTROL.get()), player);
-                            } else {
-                                Chat.send(Message.INCORRECT_PARAM.get(), player);
-                                return true;
-                            }
-                            break;
-                        default:
-                            Chat.send(Message.INCORRECT_PARAM.get(), player);
-                            break;
-                    }
                 } else {
                     Chat.send(Message.INCORRECT_USAGE.getReplaced("{command}", "/protect help"), player);
                 }
                 break;
             case "private":
                 Block privateBlock = Utilities.getPlayerTargetBlock(player);
-                if(!Utilities.canBeUnprotected(privateBlock, player)) {
-                        /*@TODO Message*/
+                if(!Utilities.canBeControlled(privateBlock, player)) {
                     return true;
                 }
 
@@ -235,18 +191,11 @@ public class Protect implements CommandExecutor {
                 long zPr = privateBlock.getZ();
 
                 MySQL.setBoolean(Main.DB_PROTECTION, "private", true, new String[] {"x", "y", "z"}, new String[] {String.valueOf(xPr), String.valueOf(yPr), String.valueOf(zPr)});
-                /*@TODO Message*/
+                Chat.send(Message.PROTECT_PRIVATE.getReplaced("{block}", privateBlock.getType().name()), player);
                 break;
             case "public":
                 Block publicBlock = Utilities.getPlayerTargetBlock(player);
-                if(!Utilities.canBeUnprotected(publicBlock, player)) {
-                        /*@TODO Message*/
-                    return true;
-                }
-
-                if(!Utilities.isProtected(publicBlock)) {
-                        /*@TODO Message*/
-                    Chat.send(Message.PROTECTION_INEXISTENT.get(), player);
+                if(!Utilities.canBeControlled(publicBlock, player)) {
                     return true;
                 }
 
@@ -255,7 +204,7 @@ public class Protect implements CommandExecutor {
                 long zPu = publicBlock.getZ();
 
                 MySQL.setBoolean(Main.DB_PROTECTION, "private", true, new String[] {"x", "y", "z"}, new String[] {String.valueOf(xPu), String.valueOf(yPu), String.valueOf(zPu)});
-                /*@TODO Message*/
+                Chat.send(Message.PROTECT_PUBLIC.getReplaced("{block}", publicBlock.getType().name()), player);
                 break;
             default:
                 Chat.send(Message.INCORRECT_USAGE.getReplaced("{command}", "/protect help"), player);

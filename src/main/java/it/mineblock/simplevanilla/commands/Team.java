@@ -144,6 +144,7 @@ public class Team implements CommandExecutor {
                     MySQL.removeRow(Main.DB_TEAM, "name", team);
                     MySQL.setString(Main.DB_USER, "team", "", "team", team);
                 }
+                Chat.send(Message.TEAM_DISBANDED.get(), player);
                 break;
             case "add":
                 boolean force = false;

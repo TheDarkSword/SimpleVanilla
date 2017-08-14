@@ -66,7 +66,13 @@ public class Ticket implements CommandExecutor {
 
                     Chat.send(Chat.getTranslated("&9-------- &f&lTicket List &9--------"), player);
 
-                    for(int i = 0; i < 16; i++) {
+                    int len = tickets.size();
+
+                    if(len > 16) {
+                        len = 16;
+                    }
+
+                    for(int i = 0; i < len; i++) {
                         if(!MySQL.rowExists(Main.DB_TICKET, "id", String.valueOf(tickets.get(i)))) {
                             break;
                         }
@@ -229,7 +235,7 @@ public class Ticket implements CommandExecutor {
             values.add((long) location.getX());
             values.add((long) location.getY());
             values.add((long) location.getZ());
-            values.add(message);
+            values.add(message.replace("'", "''"));
             values.add(jid);
 
             MySQL.insertLine(Main.DB_TICKET, new String[] {
@@ -242,11 +248,10 @@ public class Ticket implements CommandExecutor {
                     "jid"
             }, values);
 
-            int id = MySQL.getInt(Main.DB_TICKET, "jid", String.valueOf(jid), "id");
-            MySQL.setInt(Main.DB_TICKET, "jid", 0, "id", id);
+            String id = MySQL.getString(Main.DB_TICKET, "jid", String.valueOf(jid), "id");
 
             String outputStaff = Message.TICKET_NOTIFY.get();
-            outputStaff = outputStaff.replace("{code}", String.valueOf(id));
+            outputStaff = outputStaff.replace("{code}", id);
             outputStaff = outputStaff.replace("{player}", player.getName());
             outputStaff = outputStaff.replace("{message}", message);
 

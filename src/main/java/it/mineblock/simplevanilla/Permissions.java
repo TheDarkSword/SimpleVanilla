@@ -19,6 +19,6 @@ public enum Permissions {
     }
 
     public String get() {
-        return this.perm;
+        return "sv." + this.perm;
     }
 }

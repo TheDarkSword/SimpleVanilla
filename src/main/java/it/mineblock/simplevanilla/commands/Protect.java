@@ -182,28 +182,40 @@ public class Protect implements CommandExecutor {
                 break;
             case "private":
                 Block privateBlock = Utilities.getPlayerTargetBlock(player);
+
+                if(privateBlock == null || privateBlock.getType().equals(Material.AIR)) {
+                    Chat.send(Message.PROTECT_POINTER.get(), player);
+                    return true;
+                }
+
                 if(!Utilities.canBeControlled(privateBlock, player)) {
                     return true;
                 }
 
-                long xPr = privateBlock.getX();
-                long yPr = privateBlock.getY();
-                long zPr = privateBlock.getZ();
+                long xPr = (long) privateBlock.getX();
+                long yPr = (long) privateBlock.getY();
+                long zPr = (long) privateBlock.getZ();
 
                 MySQL.setBoolean(Main.DB_PROTECTION, "private", true, new String[] {"x", "y", "z"}, new String[] {String.valueOf(xPr), String.valueOf(yPr), String.valueOf(zPr)});
                 Chat.send(Message.PROTECT_PRIVATE.getReplaced("{block}", privateBlock.getType().name()), player);
                 break;
             case "public":
                 Block publicBlock = Utilities.getPlayerTargetBlock(player);
+
+                if(publicBlock == null || publicBlock.getType().equals(Material.AIR)) {
+                    Chat.send(Message.PROTECT_POINTER.get(), player);
+                    return true;
+                }
+
                 if(!Utilities.canBeControlled(publicBlock, player)) {
                     return true;
                 }
 
-                long xPu = publicBlock.getX();
-                long yPu = publicBlock.getY();
-                long zPu = publicBlock.getZ();
+                long xPu = (long) publicBlock.getX();
+                long yPu = (long) publicBlock.getY();
+                long zPu = (long) publicBlock.getZ();
 
-                MySQL.setBoolean(Main.DB_PROTECTION, "private", true, new String[] {"x", "y", "z"}, new String[] {String.valueOf(xPu), String.valueOf(yPu), String.valueOf(zPu)});
+                MySQL.setBoolean(Main.DB_PROTECTION, "private", false, new String[] {"x", "y", "z"}, new String[] {String.valueOf(xPu), String.valueOf(yPu), String.valueOf(zPu)});
                 Chat.send(Message.PROTECT_PUBLIC.getReplaced("{block}", publicBlock.getType().name()), player);
                 break;
             default:

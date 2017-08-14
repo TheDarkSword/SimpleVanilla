@@ -36,6 +36,7 @@ public enum Message {
     TEAM_ALREADY("team-already"),
     TEAM_CREATED("team-created"),
     TEAM_DENIED_PERM("team-denied-perm"),
+    TEAM_DISBANDED("team-disbanded"),
     TEAM_EXISTS("team-exists"),
     TEAM_INEXISTENT("team-inexistent"),
     TEAM_INVITE("team-invite"),

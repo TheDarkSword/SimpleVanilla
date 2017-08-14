@@ -67,6 +67,7 @@ message:
   team-already: "&cIl player è già in un team!"
   team-created: "&9Hai creato il team &f&l{name}&9!"
   team-denied-perm: "&cDevi essere il leader del team per eseguire questo comando!"
+  team-disbanded: "&9Team cancellato"
   team-exists: "&cEsiste già un team con questo nome!"
   team-inexistent: "&cTeam inesistente!"
   team-invite: "&9Hai ricevuto un invito ad entrare nel team &f&l{name}&9. Usa il comando &f/team accept &9per accettare la richiesta!"

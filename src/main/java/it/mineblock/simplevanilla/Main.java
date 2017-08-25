@@ -8,7 +8,7 @@ import it.mineblock.mbcore.MySQL;
 import it.mineblock.mbcore.spigot.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -31,7 +31,7 @@ public class Main extends JavaPlugin {
     public static Database DB_TICKET;
     public static Database DB_PROTECTION;
     public static Database DB_TEAM;
-    public static Configuration config;
+    public static FileConfiguration config;
     public static HashMap<Player, Location> locationBackup = new HashMap<>();
     public static HashMap<Player, Integer> staffTicket = new HashMap<>();
 
